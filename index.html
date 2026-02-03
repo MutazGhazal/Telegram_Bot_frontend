@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Telegram Bot</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1 class="site-title">Telegram Bot</h1>
+      </header>
+
+      <section id="auth-view" class="card auth-card">
+        <h2 class="form-title">الدخول إلى النظام</h2>
+        <form id="auth-form" class="form">
+          <label class="field">
+            <span>اسم المستخدم</span>
+            <input type="email" name="email" placeholder="example@email.com" required />
+          </label>
+          <label class="field">
+            <span>كلمة المرور</span>
+            <input type="password" name="password" placeholder="••••••••" required />
+          </label>
+          <button type="submit" id="auth-submit">تسجيل الدخول</button>
+        </form>
+        <div class="auth-toggle auth-toggle-bottom">
+          <label class="auth-option">
+            <input type="radio" name="auth_mode" value="login" checked />
+            تسجيل الدخول
+          </label>
+          <label class="auth-option">
+            <input type="radio" name="auth_mode" value="register" />
+            تسجيل جديد
+          </label>
+        </div>
+        <p id="auth-message" class="message"></p>
+      </section>
+
+      <section id="app-view" class="card hidden">
+        <div class="row">
+          <div>
+            <h2 class="section-title">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 4a3 3 0 1 1-3 3 3 3 0 0 1 3-3zm0 14a8 8 0 0 1-6.1-2.8c.7-2 2.9-3.2 6.1-3.2s5.4 1.2 6.1 3.2A8 8 0 0 1 12 20z"
+                  />
+                </svg>
+              </span>
+              بيانات الحساب
+            </h2>
+            <p id="user-email" class="muted"></p>
+          </div>
+          <button id="logout-btn" class="secondary">تسجيل الخروج</button>
+        </div>
+        <nav class="tabs">
+          <button type="button" class="tab-button active" data-page="bots">
+            البوتات
+          </button>
+          <button type="button" class="tab-button" data-page="control">
+            التحكم
+          </button>
+          <button type="button" class="tab-button" data-page="training">
+            التدريب
+          </button>
+          <button type="button" class="tab-button" data-page="whatsapp">
+            واتساب
+          </button>
+          <button type="button" class="tab-button" data-page="files">
+            الملفات
+          </button>
+        </nav>
+
+        <div class="bot-bar">
+          <label class="field">
+            <span>البوت الحالي</span>
+            <select id="bot-selector" class="select"></select>
+          </label>
+        </div>
+
+        <section class="tab-page active" data-page="bots">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 2a5 5 0 0 0-5 5v2H5a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3h-2V7a5 5 0 0 0-5-5zm3 7H9V7a3 3 0 0 1 6 0z"
+                />
+              </svg>
+            </span>
+            البوتات الخاصة بك
+          </h3>
+          <ul id="bots-list" class="list"></ul>
+
+          <div class="divider"></div>
+
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 5v14m-7-7h14"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            إضافة بوت جديد
+          </h3>
+          <form id="bot-form" class="form">
+            <input type="text" name="bot_token" placeholder="توكن البوت" required />
+            <button type="submit">حفظ</button>
+          </form>
+          <p class="note">
+            يتم حفظ التوكن كما هو. إن كنت تحتاج تشفيرًا أو تشغيلًا فعليًا للبوت،
+            استخدم Backend منفصل.
+          </p>
+          <p id="bot-message" class="message"></p>
+        </section>
+
+        <section class="tab-page" data-page="control">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M6 4h12a2 2 0 0 1 2 2v4h-2V6H6v12h6v2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 6h8v10h-8z"
+                />
+              </svg>
+            </span>
+            تحكم البوت
+          </h3>
+          <div class="control-actions">
+            <button type="button" id="bot-start">تشغيل</button>
+            <button type="button" id="bot-stop" class="secondary">إيقاف</button>
+            <button type="button" id="bot-restart" class="secondary">إعادة تشغيل</button>
+            <button type="button" id="bot-status" class="secondary">تحديث الحالة</button>
+            <button type="button" id="bot-delete" class="danger">حذف البوت</button>
+          </div>
+          <div class="status-card">
+            <p class="muted">الحالة الحالية:</p>
+            <p id="bot-status-text" class="status-value">—</p>
+          </div>
+          <div class="status-card">
+            <p class="muted">تفاصيل البوت:</p>
+            <div class="details-grid">
+              <div>
+                <span class="muted">الاسم</span>
+                <p id="bot-detail-name" class="status-value">—</p>
+              </div>
+              <div>
+                <span class="muted">المعرف</span>
+                <p id="bot-detail-id" class="status-value">—</p>
+              </div>
+              <div>
+                <span class="muted">اسم المستخدم</span>
+                <p id="bot-detail-username" class="status-value">—</p>
+              </div>
+              <div>
+                <span class="muted">الموديل</span>
+                <p id="bot-detail-model" class="status-value">—</p>
+              </div>
+              <div>
+                <span class="muted">الحالة</span>
+                <p id="bot-detail-active" class="status-value">—</p>
+              </div>
+              <div>
+                <span class="muted">تاريخ الإنشاء</span>
+                <p id="bot-detail-created" class="status-value">—</p>
+              </div>
+            </div>
+          </div>
+          <p id="bot-control-message" class="message"></p>
+        </section>
+
+        <section class="tab-page" data-page="training">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 2a5 5 0 0 0-5 5v4H5a3 3 0 0 0 0 6h4v-2H5a1 1 0 0 1 0-2h4V7a3 3 0 0 1 6 0v4h4a1 1 0 0 1 0 2h-4v2h4a3 3 0 0 0 0-6h-4V7a5 5 0 0 0-5-5z"
+                />
+              </svg>
+            </span>
+            رفع ملفات تدريب للبوت
+          </h3>
+          <form id="training-form" class="form">
+            <input type="file" id="training-file" required />
+            <button type="submit">رفع الملف</button>
+          </form>
+          <div class="control-actions">
+            <button type="button" id="training-delete" class="secondary">
+              حذف ملف التدريب
+            </button>
+          </div>
+          <div class="status-card">
+            <p class="muted">آخر ملف تدريب:</p>
+            <p id="training-info" class="status-value">—</p>
+          </div>
+          <p id="training-message" class="message"></p>
+        </section>
+
+        <section class="tab-page" data-page="whatsapp">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M20 4a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h2V8a4 4 0 0 0-4-4h-2V4zm-6 4a6 6 0 0 1 6-6h2V0h-2a8 8 0 0 0-8 8v2h2zm-2 2v4a6 6 0 0 1-6 6H4v2h2a8 8 0 0 0 8-8v-4h-2zm-2-2H8V6a6 6 0 0 1 6-6h4V0h-4a8 8 0 0 0-8 8v2z"
+                />
+              </svg>
+            </span>
+            ربط واتساب عبر QR
+          </h3>
+          <div class="control-actions">
+            <button type="button" id="whatsapp-connect">إظهار QR للربط</button>
+            <button type="button" id="whatsapp-disconnect" class="secondary">
+              فصل
+            </button>
+            <button type="button" id="whatsapp-status" class="secondary">
+              تحديث الحالة
+            </button>
+          </div>
+          <div class="status-card">
+            <p class="muted">الحالة الحالية:</p>
+            <p id="whatsapp-status-text" class="status-value">—</p>
+            <p id="whatsapp-meta" class="muted"></p>
+          </div>
+          <div id="whatsapp-qr-card" class="status-card hidden">
+            <p class="muted">QR للربط</p>
+            <img id="whatsapp-qr" alt="WhatsApp QR" class="qr-image" />
+            <p id="whatsapp-qr-hint" class="muted small"></p>
+          </div>
+          <p id="whatsapp-message" class="message"></p>
+        </section>
+
+        <section class="tab-page" data-page="files">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M4 4h6l2 2h8v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"
+                />
+              </svg>
+            </span>
+            ملفات المشروع (لوحة التحكم)
+          </h3>
+          <div class="files-toolbar">
+            <div class="files-info">
+              <span class="muted">الجذر:</span>
+              <span id="files-root" class="muted">—</span>
+            </div>
+            <div class="files-actions">
+              <button type="button" id="files-up" class="secondary">رجوع</button>
+              <button type="button" id="files-refresh">تحديث</button>
+            </div>
+          </div>
+          <label class="field">
+            <span>المسار الحالي</span>
+            <input id="files-path" type="text" placeholder="مثال: backend" />
+          </label>
+          <ul id="files-list" class="list files-list"></ul>
+          <p id="files-message" class="message"></p>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
