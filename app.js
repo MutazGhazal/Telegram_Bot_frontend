@@ -42,9 +42,14 @@ const messengerForm = document.getElementById('messenger-form');
 const messengerWebhookUrl = document.getElementById('messenger-webhook-url');
 const messengerConnectBtn = document.getElementById('messenger-connect');
 const messengerDisconnectBtn = document.getElementById('messenger-disconnect');
+const messengerResetBtn = document.getElementById('messenger-reset');
 const messengerStatusBtn = document.getElementById('messenger-status');
 const messengerStatusText = document.getElementById('messenger-status-text');
 const messengerMessage = document.getElementById('messenger-message');
+const instagramResetBtn = document.getElementById('instagram-reset');
+const instagramStatusBtn = document.getElementById('instagram-status');
+const instagramStatusText = document.getElementById('instagram-status-text');
+const instagramMessage = document.getElementById('instagram-message');
 const filesRoot = document.getElementById('files-root');
 const filesPathInput = document.getElementById('files-path');
 const filesList = document.getElementById('files-list');
@@ -159,7 +164,10 @@ const setBotControlsEnabled = (enabled) => {
     whatsappStatusBtn,
     messengerConnectBtn,
     messengerDisconnectBtn,
-    messengerStatusBtn
+    messengerResetBtn,
+    messengerStatusBtn,
+    instagramResetBtn,
+    instagramStatusBtn
   ];
 
   controls.forEach((control) => {
@@ -486,6 +494,26 @@ const refreshMessengerStatus = async () => {
   }
 };
 
+const refreshInstagramStatus = async () => {
+  clearMessage(instagramMessage);
+  const botId = getSelectedBotId();
+  if (!botId) {
+    instagramStatusText.textContent = '—';
+    return;
+  }
+
+  try {
+    const payload = await apiRequest(`/api/instagram/${botId}`);
+    instagramStatusText.textContent =
+      payload?.status === 'connected' ? 'متصل' : 'غير متصل';
+    return payload;
+  } catch (error) {
+    instagramStatusText.textContent = '—';
+    showMessage(instagramMessage, error.message || 'فشل جلب حالة انستجرام.');
+    return null;
+  }
+};
+
 filesRefresh.addEventListener('click', () => {
   loadFiles(currentFilesPath);
 });
@@ -589,8 +617,54 @@ messengerDisconnectBtn.addEventListener('click', async () => {
   }
 });
 
+messengerResetBtn.addEventListener('click', async () => {
+  clearMessage(messengerMessage);
+  if (!requireSession(messengerMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(messengerMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  const confirmed = window.confirm('سيتم حذف الاتصال السابق. هل تريد المتابعة؟');
+  if (!confirmed) return;
+
+  try {
+    await apiRequest(`/api/messenger/${botId}/reset`, { method: 'POST' });
+    showMessage(messengerMessage, 'تم حذف الاتصال السابق.', false);
+    refreshMessengerStatus();
+  } catch (error) {
+    showMessage(messengerMessage, error.message || 'فشل حذف الاتصال.');
+  }
+});
+
 messengerStatusBtn.addEventListener('click', () => {
   refreshMessengerStatus();
+});
+
+instagramResetBtn.addEventListener('click', async () => {
+  clearMessage(instagramMessage);
+  if (!requireSession(instagramMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(instagramMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  const confirmed = window.confirm('سيتم حذف الاتصال السابق. هل تريد المتابعة؟');
+  if (!confirmed) return;
+
+  try {
+    await apiRequest(`/api/instagram/${botId}/reset`, { method: 'POST' });
+    showMessage(instagramMessage, 'تم حذف الاتصال السابق.', false);
+    refreshInstagramStatus();
+  } catch (error) {
+    showMessage(instagramMessage, error.message || 'فشل حذف الاتصال.');
+  }
+});
+
+instagramStatusBtn.addEventListener('click', () => {
+  refreshInstagramStatus();
 });
 
 const updateAuthButton = () => {
@@ -698,6 +772,7 @@ botSelector.addEventListener('change', () => {
   refreshTrainingInfo();
   refreshWhatsappStatus();
   refreshMessengerStatus();
+  refreshInstagramStatus();
 });
 
 botStartBtn.addEventListener('click', async () => {

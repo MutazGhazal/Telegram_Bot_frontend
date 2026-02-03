@@ -307,6 +307,9 @@
               <button type="button" id="messenger-disconnect" class="secondary">
                 فصل
               </button>
+              <button type="button" id="messenger-reset" class="secondary">
+                حذف الاتصال السابق
+              </button>
               <button type="button" id="messenger-status" class="secondary">
                 تحديث الحالة
               </button>
@@ -330,11 +333,19 @@
             </span>
             ربط انستجرام
           </h3>
+          <div class="control-actions">
+            <button type="button" id="instagram-reset" class="secondary">
+              حذف الاتصال السابق
+            </button>
+            <button type="button" id="instagram-status" class="secondary">
+              تحديث الحالة
+            </button>
+          </div>
           <div class="status-card">
             <p class="muted">الحالة الحالية:</p>
-            <p class="status-value">قريباً</p>
+            <p id="instagram-status-text" class="status-value">—</p>
           </div>
-          <p class="note">سيتم إضافة ربط انستجرام في تحديث قادم.</p>
+          <p id="instagram-message" class="message"></p>
         </section>
       </section>
     </main>
