@@ -39,9 +39,9 @@
 5. **Start Command:** `npm start`
 6. اضبط متغيرات البيئة المذكورة أعلاه
 
-## ملاحظة مهمة لـ WPPConnect (Chrome)
-- أضف متغير البيئة: `PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer`
-- سيقوم السكربت `postinstall` بتنزيل Chrome تلقائيًا عند البناء.
+## ملاحظة مهمة لـ Baileys (واتساب)
+- لا يحتاج Chrome أو Puppeteer.
+- الربط يتم عبر QR ويُحفظ داخل مجلد `tokens` في خدمة الباك‑اند.
 
 ## تشغيل محلي
 ```bash
