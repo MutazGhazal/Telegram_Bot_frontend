@@ -38,6 +38,13 @@ const whatsappMessage = document.getElementById('whatsapp-message');
 const whatsappQrCard = document.getElementById('whatsapp-qr-card');
 const whatsappQrImage = document.getElementById('whatsapp-qr');
 const whatsappQrHint = document.getElementById('whatsapp-qr-hint');
+const messengerForm = document.getElementById('messenger-form');
+const messengerWebhookUrl = document.getElementById('messenger-webhook-url');
+const messengerConnectBtn = document.getElementById('messenger-connect');
+const messengerDisconnectBtn = document.getElementById('messenger-disconnect');
+const messengerStatusBtn = document.getElementById('messenger-status');
+const messengerStatusText = document.getElementById('messenger-status-text');
+const messengerMessage = document.getElementById('messenger-message');
 const filesRoot = document.getElementById('files-root');
 const filesPathInput = document.getElementById('files-path');
 const filesList = document.getElementById('files-list');
@@ -149,7 +156,10 @@ const setBotControlsEnabled = (enabled) => {
     whatsappDisconnectBtn,
     whatsappReconnectBtn,
     whatsappResetBtn,
-    whatsappStatusBtn
+    whatsappStatusBtn,
+    messengerConnectBtn,
+    messengerDisconnectBtn,
+    messengerStatusBtn
   ];
 
   controls.forEach((control) => {
@@ -456,6 +466,26 @@ const refreshWhatsappStatus = async () => {
   }
 };
 
+const refreshMessengerStatus = async () => {
+  clearMessage(messengerMessage);
+  const botId = getSelectedBotId();
+  if (!botId) {
+    messengerStatusText.textContent = '—';
+    return;
+  }
+
+  try {
+    const payload = await apiRequest(`/api/messenger/${botId}`);
+    messengerStatusText.textContent =
+      payload?.status === 'connected' ? 'متصل' : 'غير متصل';
+    return payload;
+  } catch (error) {
+    messengerStatusText.textContent = '—';
+    showMessage(messengerMessage, error.message || 'فشل جلب حالة مسنجر.');
+    return null;
+  }
+};
+
 filesRefresh.addEventListener('click', () => {
   loadFiles(currentFilesPath);
 });
@@ -510,6 +540,57 @@ botsList.addEventListener('mouseover', async (event) => {
   } catch {
     tooltip.textContent = 'غير متاح';
   }
+});
+
+messengerConnectBtn.addEventListener('click', async () => {
+  clearMessage(messengerMessage);
+  if (!requireSession(messengerMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(messengerMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  const form = new FormData(messengerForm);
+  const payload = {
+    page_id: form.get('page_id')?.toString().trim(),
+    page_access_token: form.get('page_access_token')?.toString().trim(),
+    webhook_url: messengerWebhookUrl.value
+  };
+
+  try {
+    await apiRequest(`/api/messenger/${botId}/connect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    showMessage(messengerMessage, 'تم حفظ بيانات مسنجر.', false);
+    refreshMessengerStatus();
+  } catch (error) {
+    showMessage(messengerMessage, error.message || 'فشل حفظ مسنجر.');
+  }
+});
+
+messengerDisconnectBtn.addEventListener('click', async () => {
+  clearMessage(messengerMessage);
+  if (!requireSession(messengerMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(messengerMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  try {
+    await apiRequest(`/api/messenger/${botId}/disconnect`, { method: 'POST' });
+    showMessage(messengerMessage, 'تم فصل مسنجر.', false);
+    refreshMessengerStatus();
+  } catch (error) {
+    showMessage(messengerMessage, error.message || 'فشل فصل مسنجر.');
+  }
+});
+
+messengerStatusBtn.addEventListener('click', () => {
+  refreshMessengerStatus();
 });
 
 const updateAuthButton = () => {
@@ -616,6 +697,7 @@ botSelector.addEventListener('change', () => {
   refreshBotStatus();
   refreshTrainingInfo();
   refreshWhatsappStatus();
+  refreshMessengerStatus();
 });
 
 botStartBtn.addEventListener('click', async () => {
@@ -858,6 +940,11 @@ const init = async () => {
   updateAuthButton();
   toggleViews(data.session);
   switchTab('bots');
+  if (messengerWebhookUrl) {
+    messengerWebhookUrl.value = apiBaseUrl
+      ? `${apiBaseUrl}/api/messenger/webhook`
+      : '';
+  }
   loadBots(data.session);
   loadFiles('');
 };

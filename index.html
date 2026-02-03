@@ -289,11 +289,34 @@
             </span>
             ربط مسنجر
           </h3>
+          <form id="messenger-form" class="form">
+            <label class="field">
+              <span>Page ID</span>
+              <input type="text" name="page_id" placeholder="مثال: 1234567890" />
+            </label>
+            <label class="field">
+              <span>Page Access Token</span>
+              <input type="text" name="page_access_token" placeholder="توكن الصفحة" />
+            </label>
+            <label class="field">
+              <span>Webhook URL</span>
+              <input type="text" id="messenger-webhook-url" readonly />
+            </label>
+            <div class="control-actions">
+              <button type="button" id="messenger-connect">حفظ وربط</button>
+              <button type="button" id="messenger-disconnect" class="secondary">
+                فصل
+              </button>
+              <button type="button" id="messenger-status" class="secondary">
+                تحديث الحالة
+              </button>
+            </div>
+          </form>
           <div class="status-card">
             <p class="muted">الحالة الحالية:</p>
-            <p class="status-value">قريباً</p>
+            <p id="messenger-status-text" class="status-value">—</p>
           </div>
-          <p class="note">سيتم إضافة ربط مسنجر في تحديث قادم.</p>
+          <p id="messenger-message" class="message"></p>
         </section>
 
         <section class="tab-page" data-page="instagram">

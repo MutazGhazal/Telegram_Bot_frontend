@@ -19,6 +19,7 @@
 - `OPENROUTER_MODEL` (اختياري، مثال: `openai/gpt-4o-mini`)
 - `OPENROUTER_SITE_URL` (اختياري)
 - `OPENROUTER_APP_NAME` (اختياري)
+- `MESSENGER_VERIFY_TOKEN` (لتحقق Webhook الخاص بمسنجر)
 - `ENCRYPTION_KEY`
 - `ALLOWED_ORIGINS` (مثال: `https://your-frontend.onrender.com`)
 - `FILES_ROOT` (مثال: `D:\\NPAI` محليًا أو مسار مناسب على السيرفر)
@@ -61,3 +62,4 @@ npm start
 - لا يوجد Vite أو React في هذه النسخة.
 - في التطوير المحلي يمكنك تعديل `frontend/config.js` مباشرةً.
 - لتغيير نموذج الذكاء الاصطناعي استخدم `OPENROUTER_MODEL`.
+- رابط Webhook لمسـنجر: `/api/messenger/webhook`.
