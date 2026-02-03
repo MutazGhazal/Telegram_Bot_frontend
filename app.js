@@ -56,6 +56,7 @@ let currentFilesPath = '';
 let currentSession = null;
 let botsCache = [];
 let botInfo = null;
+let whatsappPollTimer = null;
 
 const showMessage = (target, message, isError = true) => {
   target.textContent = message;
@@ -102,6 +103,22 @@ const apiRequest = async (path, options = {}) => {
     throw new Error(payload.error || 'فشل الاتصال بالخادم.');
   }
   return payload;
+};
+
+const startWhatsappPolling = () => {
+  if (whatsappPollTimer) {
+    clearInterval(whatsappPollTimer);
+  }
+
+  let attempts = 0;
+  whatsappPollTimer = setInterval(async () => {
+    attempts += 1;
+    await refreshWhatsappStatus();
+    if (attempts >= 30) {
+      clearInterval(whatsappPollTimer);
+      whatsappPollTimer = null;
+    }
+  }, 3000);
 };
 
 const setBotControlsEnabled = (enabled) => {
@@ -689,6 +706,7 @@ whatsappConnectBtn.addEventListener('click', async () => {
     });
     showMessage(whatsappMessage, 'تم إنشاء QR للربط.', false);
     refreshWhatsappStatus();
+    startWhatsappPolling();
   } catch (error) {
     showMessage(whatsappMessage, error.message || 'فشل ربط واتساب.');
   }
@@ -709,6 +727,10 @@ whatsappDisconnectBtn.addEventListener('click', async () => {
     });
     showMessage(whatsappMessage, 'تم فصل واتساب.', false);
     refreshWhatsappStatus();
+    if (whatsappPollTimer) {
+      clearInterval(whatsappPollTimer);
+      whatsappPollTimer = null;
+    }
   } catch (error) {
     showMessage(whatsappMessage, error.message || 'فشل فصل واتساب.');
   }
