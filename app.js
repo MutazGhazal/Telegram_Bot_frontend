@@ -114,11 +114,11 @@ const startWhatsappPolling = () => {
   whatsappPollTimer = setInterval(async () => {
     attempts += 1;
     await refreshWhatsappStatus();
-    if (attempts >= 30) {
+    if (attempts >= 20) {
       clearInterval(whatsappPollTimer);
       whatsappPollTimer = null;
     }
-  }, 3000);
+  }, 1500);
 };
 
 const setBotControlsEnabled = (enabled) => {
@@ -704,7 +704,7 @@ whatsappConnectBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({})
     });
-    showMessage(whatsappMessage, 'تم إنشاء QR للربط.', false);
+    showMessage(whatsappMessage, 'تم إنشاء QR للربط. امسحه فوراً.', false);
     refreshWhatsappStatus();
     startWhatsappPolling();
   } catch (error) {
