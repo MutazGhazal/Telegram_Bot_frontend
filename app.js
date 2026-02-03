@@ -111,14 +111,26 @@ const startWhatsappPolling = () => {
   }
 
   let attempts = 0;
+  let failures = 0;
   whatsappPollTimer = setInterval(async () => {
     attempts += 1;
-    await refreshWhatsappStatus();
-    if (attempts >= 20) {
+    const payload = await refreshWhatsappStatus();
+    if (!payload) {
+      failures += 1;
+    }
+
+    const qrReady = Boolean(payload?.qrCode || payload?.lastQr);
+    if (payload?.status === 'connected' || qrReady) {
+      clearInterval(whatsappPollTimer);
+      whatsappPollTimer = null;
+      return;
+    }
+
+    if (attempts >= 15 || failures >= 5) {
       clearInterval(whatsappPollTimer);
       whatsappPollTimer = null;
     }
-  }, 1500);
+  }, 2000);
 };
 
 const setBotControlsEnabled = (enabled) => {
@@ -414,6 +426,7 @@ const refreshWhatsappStatus = async () => {
     if (payload.error) {
       showMessage(whatsappMessage, payload.error);
     }
+    return payload;
   } catch (error) {
     whatsappStatusText.textContent = '—';
     whatsappMeta.textContent = '';
@@ -421,6 +434,7 @@ const refreshWhatsappStatus = async () => {
     whatsappQrImage.removeAttribute('src');
     whatsappQrHint.textContent = '';
     showMessage(whatsappMessage, error.message || 'فشل جلب حالة واتساب.');
+    return null;
   }
 };
 
