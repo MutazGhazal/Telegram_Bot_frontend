@@ -29,6 +29,7 @@ const trainingMessage = document.getElementById('training-message');
 const trainingInfo = document.getElementById('training-info');
 const whatsappConnectBtn = document.getElementById('whatsapp-connect');
 const whatsappDisconnectBtn = document.getElementById('whatsapp-disconnect');
+const whatsappReconnectBtn = document.getElementById('whatsapp-reconnect');
 const whatsappResetBtn = document.getElementById('whatsapp-reset');
 const whatsappStatusBtn = document.getElementById('whatsapp-status');
 const whatsappStatusText = document.getElementById('whatsapp-status-text');
@@ -58,6 +59,7 @@ let currentSession = null;
 let botsCache = [];
 let botInfo = null;
 let whatsappPollTimer = null;
+const botTokenCache = new Map();
 
 const showMessage = (target, message, isError = true) => {
   target.textContent = message;
@@ -145,6 +147,8 @@ const setBotControlsEnabled = (enabled) => {
     trainingDeleteBtn,
     whatsappConnectBtn,
     whatsappDisconnectBtn,
+    whatsappReconnectBtn,
+    whatsappResetBtn,
     whatsappStatusBtn
   ];
 
@@ -178,6 +182,7 @@ const toggleViews = (session) => {
 
 const loadBots = async (session) => {
   botsList.innerHTML = '';
+  botTokenCache.clear();
   if (!session) return;
 
   const { data, error } = await supabase
@@ -206,26 +211,38 @@ const loadBots = async (session) => {
     return;
   }
 
-  botsCache = data;
+  const uniqueBots = Array.from(
+    new Map(data.map((item) => [item.id, item])).values()
+  );
+  botsCache = uniqueBots;
   setBotControlsEnabled(true);
 
-  data.forEach((bot) => {
+  uniqueBots.forEach((bot) => {
     const item = document.createElement('li');
-    item.textContent = `${bot.bot_name} (${bot.id})`;
+    item.className = 'bot-item';
+    item.dataset.botId = bot.id;
+    const name = document.createElement('span');
+    name.className = 'bot-name';
+    name.textContent = bot.bot_name || 'Telegram Bot';
+    const token = document.createElement('span');
+    token.className = 'bot-token-tooltip';
+    token.textContent = 'مرّر المؤشر لعرض التوكن';
+    item.appendChild(name);
+    item.appendChild(token);
     botsList.appendChild(item);
   });
 
   botSelector.innerHTML = '';
   botSelector.disabled = false;
-  data.forEach((bot) => {
+  uniqueBots.forEach((bot) => {
     const option = document.createElement('option');
     option.value = bot.id;
-    option.textContent = `${bot.bot_name} (${bot.id})`;
+    option.textContent = bot.bot_name || 'Telegram Bot';
     botSelector.appendChild(option);
   });
 
-  if (!botSelector.value && data.length) {
-    botSelector.value = data[0].id;
+  if (!botSelector.value && uniqueBots.length) {
+    botSelector.value = uniqueBots[0].id;
   }
 
   await refreshBotInfo();
@@ -466,6 +483,32 @@ filesList.addEventListener('click', (event) => {
 
   if (button.dataset.type === 'directory') {
     loadFiles(button.dataset.path);
+  }
+});
+
+botsList.addEventListener('mouseover', async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  const item = target.closest('.bot-item');
+  if (!item) return;
+  const botId = item.dataset.botId;
+  if (!botId) return;
+
+  const tooltip = item.querySelector('.bot-token-tooltip');
+  if (!tooltip) return;
+
+  if (botTokenCache.has(botId)) {
+    tooltip.textContent = botTokenCache.get(botId);
+    return;
+  }
+
+  try {
+    const payload = await apiRequest(`/api/bots/${botId}/token`);
+    const token = payload?.token || 'غير متاح';
+    botTokenCache.set(botId, token);
+    tooltip.textContent = token;
+  } catch {
+    tooltip.textContent = 'غير متاح';
   }
 });
 
@@ -748,6 +791,25 @@ whatsappDisconnectBtn.addEventListener('click', async () => {
     }
   } catch (error) {
     showMessage(whatsappMessage, error.message || 'فشل فصل واتساب.');
+  }
+});
+
+whatsappReconnectBtn.addEventListener('click', async () => {
+  clearMessage(whatsappMessage);
+  if (!requireSession(whatsappMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(whatsappMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  try {
+    await apiRequest(`/api/whatsapp/${botId}/reconnect`, { method: 'POST' });
+    showMessage(whatsappMessage, 'تم طلب إعادة الاتصال.', false);
+    refreshWhatsappStatus();
+    startWhatsappPolling();
+  } catch (error) {
+    showMessage(whatsappMessage, error.message || 'فشل إعادة الاتصال.');
   }
 });
 

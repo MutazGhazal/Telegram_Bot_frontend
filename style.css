@@ -236,8 +236,8 @@ button.danger {
 
 .status-card {
   border: 1px dashed rgba(251, 191, 36, 0.5);
-  border-radius: 12px;
-  padding: 12px 14px;
+  border-radius: 10px;
+  padding: 10px 12px;
   margin-top: 12px;
   background: rgba(251, 191, 36, 0.05);
 }
@@ -281,10 +281,50 @@ button.danger {
 }
 
 .list li {
-  padding: 10px;
+  padding: 8px 10px;
   border: 1px solid #fbbf24;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #fef08a;
+}
+
+.bot-list {
+  gap: 6px;
+}
+
+.bot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.bot-name {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.bot-token-tooltip {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0b0b0b;
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #fef08a;
+  opacity: 0;
+  visibility: hidden;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bot-item:hover .bot-token-tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .files-toolbar {

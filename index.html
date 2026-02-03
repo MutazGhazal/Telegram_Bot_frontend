@@ -71,6 +71,12 @@
           <button type="button" class="tab-button" data-page="whatsapp">
             واتساب
           </button>
+          <button type="button" class="tab-button" data-page="messenger">
+            مسنجر
+          </button>
+          <button type="button" class="tab-button" data-page="instagram">
+            انستجرام
+          </button>
           <button type="button" class="tab-button" data-page="files">
             الملفات
           </button>
@@ -94,7 +100,7 @@
             </span>
             البوتات الخاصة بك
           </h3>
-          <ul id="bots-list" class="list"></ul>
+          <ul id="bots-list" class="list bot-list"></ul>
 
           <div class="divider"></div>
 
@@ -220,6 +226,9 @@
             <button type="button" id="whatsapp-disconnect" class="secondary">
               فصل
             </button>
+            <button type="button" id="whatsapp-reconnect" class="secondary">
+              إعادة اتصال
+            </button>
             <button type="button" id="whatsapp-reset" class="secondary">
               حذف الاتصال السابق
             </button>
@@ -267,6 +276,42 @@
           </label>
           <ul id="files-list" class="list files-list"></ul>
           <p id="files-message" class="message"></p>
+        </section>
+
+        <section class="tab-page" data-page="messenger">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 2a10 10 0 1 0 6.2 17.8V22l3-1.2A10 10 0 0 0 12 2zm-4 8h8l-4 4-4-4z"
+                />
+              </svg>
+            </span>
+            ربط مسنجر
+          </h3>
+          <div class="status-card">
+            <p class="muted">الحالة الحالية:</p>
+            <p class="status-value">قريباً</p>
+          </div>
+          <p class="note">سيتم إضافة ربط مسنجر في تحديث قادم.</p>
+        </section>
+
+        <section class="tab-page" data-page="instagram">
+          <h3 class="section-title small">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm6.5-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"
+                />
+              </svg>
+            </span>
+            ربط انستجرام
+          </h3>
+          <div class="status-card">
+            <p class="muted">الحالة الحالية:</p>
+            <p class="status-value">قريباً</p>
+          </div>
+          <p class="note">سيتم إضافة ربط انستجرام في تحديث قادم.</p>
         </section>
       </section>
     </main>
