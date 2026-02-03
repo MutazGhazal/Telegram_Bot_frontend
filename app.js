@@ -29,6 +29,7 @@ const trainingMessage = document.getElementById('training-message');
 const trainingInfo = document.getElementById('training-info');
 const whatsappConnectBtn = document.getElementById('whatsapp-connect');
 const whatsappDisconnectBtn = document.getElementById('whatsapp-disconnect');
+const whatsappResetBtn = document.getElementById('whatsapp-reset');
 const whatsappStatusBtn = document.getElementById('whatsapp-status');
 const whatsappStatusText = document.getElementById('whatsapp-status-text');
 const whatsappMeta = document.getElementById('whatsapp-meta');
@@ -747,6 +748,31 @@ whatsappDisconnectBtn.addEventListener('click', async () => {
     }
   } catch (error) {
     showMessage(whatsappMessage, error.message || 'فشل فصل واتساب.');
+  }
+});
+
+whatsappResetBtn.addEventListener('click', async () => {
+  clearMessage(whatsappMessage);
+  if (!requireSession(whatsappMessage)) return;
+  const botId = getSelectedBotId();
+  if (!botId) {
+    showMessage(whatsappMessage, 'اختر بوتاً أولاً.');
+    return;
+  }
+
+  const confirmed = window.confirm('سيتم حذف الاتصال السابق. هل تريد المتابعة؟');
+  if (!confirmed) return;
+
+  try {
+    await apiRequest(`/api/whatsapp/${botId}/reset`, { method: 'POST' });
+    showMessage(whatsappMessage, 'تم حذف الاتصال السابق.', false);
+    refreshWhatsappStatus();
+    if (whatsappPollTimer) {
+      clearInterval(whatsappPollTimer);
+      whatsappPollTimer = null;
+    }
+  } catch (error) {
+    showMessage(whatsappMessage, error.message || 'فشل حذف الاتصال.');
   }
 });
 
