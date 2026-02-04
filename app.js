@@ -587,6 +587,12 @@ messengerConnectBtn.addEventListener('click', async () => {
   };
 
   try {
+    const status = await refreshMessengerStatus();
+    if (status?.status === 'connected') {
+      showMessage(messengerMessage, 'مسنجر مربوط بالفعل. قم بالحذف أولاً.');
+      return;
+    }
+
     await apiRequest(`/api/messenger/${botId}/connect`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -914,6 +920,12 @@ whatsappConnectBtn.addEventListener('click', async () => {
   }
 
   try {
+    const status = await refreshWhatsappStatus();
+    if (status?.status === 'connected' || status?.status === 'connecting') {
+      showMessage(whatsappMessage, 'واتساب مربوط بالفعل. قم بالفصل أولاً.');
+      return;
+    }
+
     await apiRequest(`/api/whatsapp/${botId}/connect`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
