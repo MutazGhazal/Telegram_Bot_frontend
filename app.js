@@ -61,6 +61,7 @@ const tabPages = document.querySelectorAll('.tab-page');
 
 const authForm = document.getElementById('auth-form');
 const authSubmit = document.getElementById('auth-submit');
+const googleAuthBtn = document.getElementById('google-auth');
 const authModeInputs = document.querySelectorAll('input[name="auth_mode"]');
 const botForm = document.getElementById('bot-form');
 const logoutBtn = document.getElementById('logout-btn');
@@ -707,6 +708,20 @@ authForm.addEventListener('submit', async (event) => {
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password
+  });
+
+  if (error) {
+    showMessage(authMessage, error.message);
+  }
+});
+
+googleAuthBtn?.addEventListener('click', async () => {
+  clearMessage(authMessage);
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
   });
 
   if (error) {

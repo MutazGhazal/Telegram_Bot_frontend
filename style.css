@@ -192,6 +192,22 @@ button.danger {
   border: 1px solid #ef4444;
 }
 
+.oauth-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.oauth-button {
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #e5e7eb;
+}
+
+.oauth-button:hover {
+  filter: brightness(0.98);
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
